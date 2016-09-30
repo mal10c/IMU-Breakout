@@ -49,6 +49,33 @@
 		);
 	}
 
+	function did_ball_hit_a_block ( )
+	{
+		var ballTopEdge = y - ballRadius;
+		var ballBottomEdge = y + ballRadius;
+		var ballLeftEdge = x - ballRadius;
+		var ballRightEdge = x + ballRadius;
+
+		for ( var rowIndex = 0; rowIndex < blocks.length; rowIndex++ )
+		{
+			for ( var colIndex = 0; colIndex < blocks[rowIndex].length; colIndex++ )
+			{
+				var block = blocks[rowIndex][colIndex];
+				if ( block.show === 1 )
+				{
+					if ( (ballTopEdge <= block.bottomEdge) && (ballBottomEdge >= block.topEdge) &&
+						 (ballLeftEdge <= block.rightEdge) && (ballRightEdge >= block.leftEdge) )
+					{
+						dy = -dy;
+						clear_block ( block );
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	function update_ball_position ( )
 	{
 		
@@ -126,6 +153,8 @@
 
 		}
 
+		did_ball_hit_a_block ( );
+
 		x += dx;
 		y += dy;
 
@@ -195,6 +224,18 @@
 	    ctx.fillStyle = blockColor;
 	    ctx.fill();
 	    ctx.closePath();
+	}
+
+	function clear_block ( block )
+	{
+		ctx.clearRect(
+			block.leftEdge, 
+			block.topEdge, 
+			blockWidth, 
+			blockHeight
+		);
+
+		block.show = 0;
 	}
 
 	function draw_blocks ( )

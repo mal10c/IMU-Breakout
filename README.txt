@@ -1,4 +1,4 @@
-breakout-accel is a Breakout clone.
+IMU-Breakout is a Breakout clone.
 
 I remember playing a breakout clone called brickles in grade school on Mac Classics.
 If you've never heard of the Mac Classic (black and white 9 inch screen) then here's a
@@ -13,11 +13,9 @@ it and hacked away until the game worked.  Back then I didn't know about variabl
 loops.  Being self taught I just hacked away until it worked.  For loops, I used timers,
 and for variables I used label elements.  It actually worked pretty well in the end.
 
-breakout-accel is a fun way to re-introduce breakout using Javascript.  Javascript
+IMU-Breakout is a fun way to re-introduce breakout using Javascript.  Javascript
 has quickly become one of my favorite programming langauges.
 
 NOTE:
 gyroscope and accelerometer horizontal displacement will need to be extracted to
 determine position of the paddle.
-
-https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_JavaScript

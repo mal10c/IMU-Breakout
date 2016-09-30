@@ -50,6 +50,28 @@
 		);
 	}
 
+
+	function is_game_over ( )
+	{
+		var gameOver = true;
+
+		for ( var rowIndex = 0; rowIndex < blocks.length; rowIndex++ )
+		{
+			for ( var colIndex = 0; colIndex < blocks[rowIndex].length; colIndex++ )
+			{
+				var block = blocks[rowIndex][colIndex];
+				if ( (block.show === 1) && (block.health !== -1) )
+				{
+					gameOver = false;
+					break;
+				}
+			}
+		}
+
+		return gameOver;
+	}
+
+
 	function did_ball_hit_a_block ( )
 	{
 		var ballTopEdge = y - ballRadius;
@@ -292,6 +314,11 @@
 		draw_new_paddle ( );
 
 		update_paddle_position ( );
+
+		if ( is_game_over() === true )
+		{
+			console.log ( "You won!!!" );
+		}
 
 	}
 

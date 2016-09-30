@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="480" height="320"></canvas>
+
+<script>
+	
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	var ballRadius = 10;
+	var paddlePos = canvas.width / 2;
+	var paddleHeight = 20;
+	var paddleWidth = 140;
+	var newPaddlePos = paddlePos;
+	var x = canvas.width / 2;
+	var y = canvas.height - (paddleHeight + ballRadius);
+	var dx = 1;
+	var dy = -1;
+	var paddleDX = 8;
+	var lockPaddlePos = false;
+
+	function clear_old_ball ( )
+	{
+		ctx.clearRect(
+			x - ballRadius, 
+			y - ballRadius, 
+			ballRadius * 2, 
+			ballRadius *2
+		);
+	}
+
+	function update_ball_position ( )
+	{
+		
+		var ballTopEdge = y + dy - ballRadius;
+		var ballBottomEdge = y + dy + ballRadius;
+		var ballLeftEdge = x + dx - ballRadius;
+		var ballRightEdge = x + dx + ballRadius;
+		var paddleLeftEdge = paddlePos - (paddleWidth / 2);
+		var paddleRightEdge = paddlePos + (paddleWidth / 2);
+		var paddleImpactAreaCount = 5;									// This must be odd
+
+		if ( ballTopEdge < 0 )
+		{
+			dy = -dy;
+		}
+		else if ( ballBottomEdge > canvas.height )
+		{
+			dy = -dy;
+			console.warn ( "You're dead" );
+		}
+
+		if ( (ballLeftEdge < 0) || (ballRightEdge > canvas.width) )
+		{
+			dx = -dx;
+		}
+
+		// Determine if the ball hit the paddle
+		if ( (ballBottomEdge >= (canvas.height - paddleHeight)) &&
+			 (ballRightEdge >= (paddlePos - (paddleWidth / 2))) &&
+			 (ballLeftEdge <= (paddlePos + (paddleWidth / 2))) )
+		{
+			dy = -dy;
+
+			for ( index = 0; index < paddleImpactAreaCount; index++ )
+			{
+				var segmentLeft = ((paddleWidth / paddleImpactAreaCount) * index) + paddleLeftEdge;
+				var segmentRight = ((paddleWidth / paddleImpactAreaCount) * (index + 1)) + paddleLeftEdge;
+
+				if ( (ballRightEdge >= segmentLeft) && (ballLeftEdge <= segmentRight) )
+				{
+				
+					var center = (paddleImpactAreaCount - 1) / 2;
+
+					var deltaCenter = index - center;
+					
+					if ( deltaCenter === 0 )
+					{
+						if ( dx < 0 )
+						{
+							dx = -1;
+						}
+						else
+						{
+							dx = 1;
+						}
+					}
+					else
+					{
+						if ( deltaCenter < 0 )
+							deltaCenter--;
+						else
+							deltaCenter++;
+					}
+
+
+					console.log ( "dCenter: " + deltaCenter );
+					console.log ( "Center: " + center );
+					console.log ( "Index: " + index );
+
+					dx = deltaCenter;
+					
+					break;
+				}
+			}
+
+		}
+
+		x += dx;
+		y += dy;
+
+	}
+
+	function draw_new_ball ( ) 
+	{
+	    ctx.beginPath();
+	    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+	    ctx.fillStyle = "#0095DD";
+	    ctx.fill();
+	    ctx.closePath();
+	}
+
+	function draw_new_paddle ( )
+	{
+		ctx.beginPath();
+	    
+	    ctx.rect(
+	    	paddlePos - (paddleWidth / 2),
+	    	canvas.height - paddleHeight,
+	    	paddleWidth,
+	    	paddleHeight
+	    );
+
+	    ctx.fillStyle = "#8895DD";
+	    ctx.fill();
+	    ctx.closePath();
+	}
+
+	function clear_old_paddle ( )
+	{
+		ctx.clearRect(
+			paddlePos - (paddleWidth / 2), 
+			canvas.height - paddleHeight, 
+			paddleWidth, 
+			paddleHeight
+		);
+	}
+
+	function update_paddle_position ( )
+	{
+
+		if ( newPaddlePos !== paddlePos )
+		{
+
+			clear_old_paddle ( );
+			paddlePos = newPaddlePos;
+			draw_new_paddle ( );
+
+			lockPaddlePos = false;
+		}
+	
+	}
+
+	function draw ( )
+	{
+		clear_old_ball ( );
+
+		update_ball_position ( );
+
+		draw_new_ball ( );
+
+		draw_new_paddle ( );
+
+		update_paddle_position ( );
+
+	}
+
+	setInterval ( draw, 5 );
+
+	window.onload = function ( e ) {
+		console.log ( "Running" );
+
+		document.onkeydown = function ( e ) {
+
+		    e = e || window.event;
+
+		    if ( lockPaddlePos === false )
+		    {
+			    if (e.keyCode == '37') 					// Determine if left arrow key was pressed
+			    {
+			    	if ( paddlePos - paddleDX - (paddleWidth / 2) >= 0 )
+			    	{
+			    		var ppos = paddlePos - paddleDX;
+			    		if ( ppos - (paddleWidth / 2) < 0 )
+			    			ppos = paddleWidth / 2;
+
+			       		newPaddlePos = ppos;
+			       		var edge = newPaddlePos - (paddleWidth / 2);
+			    		lockPaddlePos = true;
+			    	}
+
+			    }
+			    else if (e.keyCode == '39') 			// Determine if right arrow key was pressed
+			    {
+			    	if ( paddlePos + paddleDX + (paddleWidth / 2) <= canvas.width )
+			    	{
+			    		var ppos = paddlePos + paddleDX;
+			    		if ( ppos + (paddleWidth / 2) > canvas.width )
+			    			ppos = canvas.width - (paddleWidth / 2);
+
+			       		newPaddlePos = ppos
+			    		lockPaddlePos = true;
+			    	}
+
+			    }
+
+			}
+		}
+	}
+
+</script>
+
+</body>
+</html>

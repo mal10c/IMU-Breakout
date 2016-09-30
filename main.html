@@ -13,6 +13,8 @@
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
 <script>
+
+	"use strict";
 	
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
@@ -71,7 +73,7 @@
 		{
 			dy = -dy;
 
-			for ( index = 0; index < paddleImpactAreaCount; index++ )
+			for ( var index = 0; index < paddleImpactAreaCount; index++ )
 			{
 				var segmentLeft = ((paddleWidth / paddleImpactAreaCount) * index) + paddleLeftEdge;
 				var segmentRight = ((paddleWidth / paddleImpactAreaCount) * (index + 1)) + paddleLeftEdge;

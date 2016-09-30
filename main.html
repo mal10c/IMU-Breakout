@@ -36,6 +36,7 @@
 
 	var blocks = [
 		[{"show": 1, "color": "red", "health": 1}, {"show": 0, "color": "blue", "health": 1}, {"show": 1, "color": "#97aaff", "health": 1}, {"show": 1, "color": "red", "health": 1}],
+		[{"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "green", "health": 1}, {"show": 1, "color": "red", "health": 1}],
 		[{"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "green", "health": 1}, {"show": 1, "color": "red", "health": 1}]
 	];
 
@@ -66,7 +67,24 @@
 					if ( (ballTopEdge <= block.bottomEdge) && (ballBottomEdge >= block.topEdge) &&
 						 (ballLeftEdge <= block.rightEdge) && (ballRightEdge >= block.leftEdge) )
 					{
-						dy = -dy;
+
+						if ( ballTopEdge >= (block.bottomEdge - Math.abs(dy)) )				// Hit bottom of block
+						{
+							dy = -dy;
+						}
+						else if ( ballBottomEdge <= (block.topEdge + Math.abs(dy)) )		// Hit top of block
+						{
+							dy = -dy;
+						}
+						else if ( ballLeftEdge >= (block.rightEdge - Math.abs(dx)) )		// Hit right of block
+						{
+							dx = -dx;
+						}
+						else																// Hit left of block
+						{
+							dx = -dx;
+						}	
+						
 						clear_block ( block );
 
 						break;

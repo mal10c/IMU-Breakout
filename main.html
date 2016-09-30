@@ -30,6 +30,15 @@
 	var paddleDX = 8;
 	var lockPaddlePos = false;
 
+	var blockWidth = 70;
+	var blockHeight = 24;
+	var blockMargin = 10;
+
+	var blocks = [
+		[{"show": 1, "color": "red", "health": 1}, {"show": 0, "color": "blue", "health": 1}, {"show": 1, "color": "#97aaff", "health": 1}, {"show": 1, "color": "red", "health": 1}],
+		[{"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "red", "health": 1}, {"show": 1, "color": "green", "health": 1}, {"show": 1, "color": "red", "health": 1}]
+	];
+
 	function clear_old_ball ( )
 	{
 		ctx.clearRect(
@@ -172,6 +181,47 @@
 	
 	}
 
+	function draw_block ( blockX, blockY, blockColor )
+	{
+		ctx.beginPath();
+	    
+	    ctx.rect(
+	    	blockX,
+	    	blockY,
+	    	blockWidth,
+	    	blockHeight
+	    );
+
+	    ctx.fillStyle = blockColor;
+	    ctx.fill();
+	    ctx.closePath();
+	}
+
+	function draw_blocks ( )
+	{
+		for ( var rowIndex = 0; rowIndex < blocks.length; rowIndex++ )
+		{
+			for ( var colIndex = 0; colIndex < blocks[rowIndex].length; colIndex++ )
+			{
+				var blockRules = blocks[rowIndex][colIndex];
+				var groupWidth = (blockWidth + blockMargin) * blocks[rowIndex].length;
+				var groupHeight = (blockHeight + blockMargin) * blocks.length;
+				var blockX = (canvas.width / 2) - (groupWidth / 2) + ((blockWidth + blockMargin) * colIndex);
+				var blockY = 40 + ((blockHeight + blockMargin) * rowIndex);
+
+				console.log ( "X: " + blockX );
+				if ( blocks[rowIndex][colIndex].show === 1 )
+				{
+					draw_block ( blockX, blockY, blocks[rowIndex][colIndex].color );
+					blocks[rowIndex][colIndex].leftEdge = blockX;
+					blocks[rowIndex][colIndex].topEdge = blockY;
+					blocks[rowIndex][colIndex].rightEdge = blockX + blockWidth;
+					blocks[rowIndex][colIndex].bottomEdge = blockY + blockHeight;
+				}
+			}
+		}
+	}
+
 	function draw ( )
 	{
 		clear_old_ball ( );
@@ -189,7 +239,8 @@
 	setInterval ( draw, 5 );
 
 	window.onload = function ( e ) {
-		console.log ( "Running" );
+		
+		draw_blocks ( );
 
 		document.onkeydown = function ( e ) {
 
